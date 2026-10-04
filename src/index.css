@@ -29,3 +29,21 @@
 body {
   @apply bg-background text-foreground font-sans antialiased;
 }
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
