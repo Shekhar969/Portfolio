@@ -43,7 +43,29 @@ export const sampleProjects = [
     featured: true,
     githubUrl: "",
     liveUrl: "",
-    caseStudyContent: "",
+        caseStudy: {
+      problem:
+        "Traditional CCTV systems primarily record footage and require humans to continuously monitor or manually review events.",
+      solution:
+        "An intelligent computer-vision monitoring concept that detects people, evaluates restricted-zone intrusion, captures evidence, and generates alerts.",
+      architecture: [
+        "Camera",
+        "Video Stream",
+        "Object Detection",
+        "Person Tracking",
+        "Restricted Zone",
+        "Intrusion Verification",
+        "Evidence Capture",
+        "Alert",
+      ],
+      implementedFeatures: [],
+      plannedFeatures: [
+        "Real-time person detection",
+        "Restricted-zone verification",
+        "Evidence capture",
+        "Alerts",
+      ],
+    },
     isPlaceholder: true,
   },
   {
