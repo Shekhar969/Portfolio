@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { ROUTES, SOCIAL_LINKS } from "../../lib/constants";
+import { useSite } from "../../hooks/useSite";
+import { ROUTES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
 
 const linkClass =
@@ -8,7 +9,8 @@ const linkClass =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 export default function SocialLinks({ className }) {
-  const links = SOCIAL_LINKS.filter((item) => item.href);
+  const { site } = useSite();
+  const links = site.socialLinks.filter((item) => item.href);
 
   return (
     <ul className={cn("flex flex-wrap items-center gap-x-5 gap-y-2", className)}>

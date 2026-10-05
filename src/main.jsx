@@ -7,14 +7,17 @@ import "./index.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeContext";
 import { HelmetProvider } from "react-helmet-async";
+import { SiteProvider } from "./context/SiteContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
 <ThemeProvider>
   <HelmetProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <SiteProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </SiteProvider>
   </HelmetProvider>
 </ThemeProvider>
   </React.StrictMode>
