@@ -117,3 +117,7 @@ export const FORM_STATUS = {
   success: "success",
   error: "error",
 };
+
+// Optional social preview image, e.g. "/og-image.png" (1200x630, placed in /public).
+// Leave empty to skip the image tags.
+export const OG_IMAGE = "";
