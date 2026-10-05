@@ -107,7 +107,7 @@ export default function FieldInput({ field, value, onChange, error }) {
     );
   }
 
-  if (type === "textarea" || type === "lines" || type === "gallery") {
+  if (type === "textarea" || type === "lines" || type === "gallery" || type === "links") {
     return (
       <div>
         <Textarea

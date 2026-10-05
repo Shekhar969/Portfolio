@@ -2,11 +2,19 @@ import { slugify } from "../lib/utils";
 
 const URL_PATTERN = /^https?:\/\/\S+$/i;
 const IMAGE_PATTERN = /^(\/|https?:\/\/)\S+$/i;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const splitLines = (text) =>
-  text.split("\n").map((line) => line.trim()).filter(Boolean);
+  text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
 const splitTags = (text) =>
-  text.split(",").map((tag) => tag.trim()).filter(Boolean);
+  text
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 
 /** Stored data -> values the form inputs can show. */
 export function toForm(fields, data = {}) {
@@ -33,11 +41,17 @@ export function toForm(fields, data = {}) {
               .join("\n")
           : "";
         break;
+      case "links":
+        out[field.name] = Array.isArray(value)
+          ? value.map((l) => `${l.label} | ${l.url}`).join("\n")
+          : "";
+        break;
       case "group":
         out[field.name] = toForm(field.fields, value || {});
         break;
       case "number":
-        out[field.name] = value === undefined || value === null ? "" : String(value);
+        out[field.name] =
+          value === undefined || value === null ? "" : String(value);
         break;
       default:
         out[field.name] = value ?? "";
@@ -47,7 +61,9 @@ export function toForm(fields, data = {}) {
 }
 
 function isEmptyGroup(group) {
-  return Object.values(group).every((v) => (Array.isArray(v) ? v.length === 0 : !v));
+  return Object.values(group).every((v) =>
+    Array.isArray(v) ? v.length === 0 : !v
+  );
 }
 
 /** Form values -> clean data to store (no undefined values). */
@@ -74,6 +90,12 @@ export function fromForm(fields, values) {
           return { url: url.trim(), alt: rest.join("|").trim() };
         });
         break;
+      case "links":
+        out[field.name] = splitLines(value).map((line) => {
+          const [label, ...rest] = line.split("|");
+          return { label: label.trim(), url: rest.join("|").trim() };
+        });
+        break;
       case "number":
         out[field.name] = value === "" ? 0 : Number(value);
         break;
@@ -94,6 +116,7 @@ export function validate(fields, values, { items = [], currentId = null } = {}) 
   const errors = {};
   for (const field of fields) {
     if (field.type === "group") continue;
+
     const value = values[field.name];
     const empty =
       typeof value === "string"
@@ -111,9 +134,11 @@ export function validate(fields, values, { items = [], currentId = null } = {}) 
     if (field.url && !URL_PATTERN.test(value.trim())) {
       errors[field.name] = "Enter a full link starting with https://";
     }
+
     if (field.type === "number" && !Number.isFinite(Number(value))) {
       errors[field.name] = "Enter a number.";
     }
+
     if (field.type === "gallery") {
       const bad = splitLines(value).some(
         (line) => !IMAGE_PATTERN.test(line.split("|")[0].trim())
@@ -123,11 +148,33 @@ export function validate(fields, values, { items = [], currentId = null } = {}) 
           "Each line must start with an image path (/images/…) or an https:// link.";
       }
     }
+
+    if (field.email && !EMAIL_PATTERN.test(value.trim())) {
+      errors[field.name] = "Enter a valid email address.";
+    }
+
+    if (field.pathOrUrl && !IMAGE_PATTERN.test(value.trim())) {
+      errors[field.name] =
+        "Enter a path starting with / or a full https:// link.";
+    }
+
+    if (field.type === "links") {
+      const bad = splitLines(value).some((line) => {
+        const [label, ...rest] = line.split("|");
+        return !label.trim() || !URL_PATTERN.test(rest.join("|").trim());
+      });
+      if (bad) {
+        errors[field.name] = "Each line must look like: Label | https://…";
+      }
+    }
+
     if (field.slug) {
       const slug = value.trim();
       if (slug !== slugify(slug)) {
         errors[field.name] = "Use lowercase letters, numbers, and hyphens only.";
-      } else if (items.some((i) => i.id !== currentId && i[field.name] === slug)) {
+      } else if (
+        items.some((i) => i.id !== currentId && i[field.name] === slug)
+      ) {
         errors[field.name] = "Another item already uses this slug.";
       }
     }
