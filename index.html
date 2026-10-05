@@ -1,13 +1,43 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shekhar Rawal | Quality Assurance</title>
+<meta name="description" content="Quality assurance engineer and developer interested in building useful software, intelligent systems, and practical solutions to real-world problems." />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="canonical" href="https://www.shekharrawal.com.np/" />
+<meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Shekhar Rawal" />
+<meta property="og:title" content="Shekhar Rawal | Quality Assurance" />
+<meta property="og:description" content="Quality assurance engineer and developer interested in building useful software, intelligent systems, and practical solutions to real-world problems." />
+<meta property="og:url" content="https://www.shekharrawal.com.np/" />
+<meta name="twitter:card" content="summary" />
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>portfolio</title>
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("portfolio-theme");
+        var theme = stored === "light" || stored === "dark" ? stored : "system";
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var isDark = theme === "dark" || (theme === "system" && prefersDark);
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+      } catch (e) { }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+</body>
+
 </html>

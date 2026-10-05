@@ -29,3 +29,125 @@
 body {
   @apply bg-background text-foreground font-sans antialiased;
 }
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 200ms ease-out both;
+}
+
+/* ---------- Article typography ---------- */
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--muted-foreground);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-bullets: var(--muted-foreground);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+}
+
+.prose :where(h1, h2, h3) {
+  scroll-margin-top: 5rem;
+}
+
+.prose :not(pre) > code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.875em;
+  font-weight: 400;
+  background: var(--muted);
+  border-radius: 0.25rem;
+  padding: 0.15rem 0.35rem;
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
+.prose pre code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 13px;
+  background: transparent;
+  padding: 0;
+}
+
+/* ---------- Code highlighting ---------- */
+:root {
+  --hl-comment: #6b7280;
+  --hl-keyword: #9333ea;
+  --hl-string: #15803d;
+  --hl-number: #b45309;
+  --hl-title: #2563eb;
+  --hl-attr: #0e7490;
+}
+
+.dark {
+  --hl-comment: #8b949e;
+  --hl-keyword: #c084fc;
+  --hl-string: #86efac;
+  --hl-number: #fdba74;
+  --hl-title: #93c5fd;
+  --hl-attr: #67e8f9;
+}
+
+.hljs-comment,
+.hljs-quote { color: var(--hl-comment); font-style: italic; }
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag { color: var(--hl-keyword); }
+.hljs-string,
+.hljs-regexp,
+.hljs-addition { color: var(--hl-string); }
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet { color: var(--hl-number); }
+.hljs-title,
+.hljs-section,
+.hljs-name { color: var(--hl-title); }
+.hljs-attr,
+.hljs-attribute,
+.hljs-built_in,
+.hljs-type,
+.hljs-variable,
+.hljs-template-variable { color: var(--hl-attr); }
+.hljs-deletion { color: #dc2626; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }
