@@ -2,8 +2,7 @@ import { useMemo, useState } from "react";
 import Container from "../components/layout/Container";
 import ProjectFilters from "../components/projects/ProjectFilters";
 import ProjectList from "../components/projects/ProjectList";
-import DataBoundary from "../components/ui/DataBoundary";
-import { useProjects } from "../hooks/useProjects";
+import { projects } from "../data/content";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { matchesQuery } from "../lib/utils";
 
@@ -11,9 +10,6 @@ export default function Projects() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const debouncedQuery = useDebouncedValue(query);
-
-  const { data, loading, error, reload } = useProjects();
-  const projects = useMemo(() => data ?? [], [data]);
 
   const filtered = useMemo(
     () =>
@@ -29,7 +25,7 @@ export default function Projects() {
         );
         return inCategory && inQuery;
       }),
-    [projects, debouncedQuery, category]
+    [debouncedQuery, category]
   );
 
   const clearFilters = () => {
@@ -53,18 +49,13 @@ export default function Projects() {
         />
       </div>
 
-      <DataBoundary loading={loading} error={error} onRetry={reload}>
-        <p
-          aria-live="polite"
-          className="mt-6 font-mono text-xs text-muted-foreground"
-        >
-          {filtered.length} {filtered.length === 1 ? "project" : "projects"}
-        </p>
+      <p aria-live="polite" className="mt-6 font-mono text-xs text-muted-foreground">
+        {filtered.length} {filtered.length === 1 ? "project" : "projects"}
+      </p>
 
-        <div className="mt-2">
-          <ProjectList projects={filtered} onClearFilters={clearFilters} />
-        </div>
-      </DataBoundary>
+      <div className="mt-2">
+        <ProjectList projects={filtered} onClearFilters={clearFilters} />
+      </div>
     </Container>
   );
 }
