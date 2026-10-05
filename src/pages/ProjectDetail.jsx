@@ -6,7 +6,10 @@ import ArchitectureFlow from "../components/projects/ArchitectureFlow";
 import ProjectGallery from "../components/projects/ProjectGallery";
 import ProjectCard from "../components/projects/ProjectCard";
 import NotFound from "./NotFound";
-import { projects } from "../data/content";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+import { useProject, useProjects } from "../hooks/useProjects";
+import { getFirebaseErrorMessage } from "../lib/utils";
 import { PROJECT_STATUSES, ROUTES } from "../lib/constants";
 
 const linkClass =
@@ -35,7 +38,24 @@ function BulletList({ items }) {
 
 export default function ProjectDetail() {
   const { slug } = useParams();
-  const project = projects.find((p) => p.slug === slug);
+  const { data: project, loading, error, reload } = useProject(slug);
+  const { data: allProjects } = useProjects();
+
+  if (loading) {
+    return (
+      <Container className="py-16">
+        <LoadingState />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-16">
+        <ErrorState message={getFirebaseErrorMessage(error)} onRetry={reload} />
+      </Container>
+    );
+  }
 
   if (!project) return <NotFound />;
 
@@ -53,7 +73,7 @@ export default function ProjectDetail() {
     gallery = [],
   } = project;
 
-  const related = projects
+  const related = (allProjects ?? [])
     .filter(
       (p) =>
         p.id !== project.id && p.category?.some((c) => category.includes(c))

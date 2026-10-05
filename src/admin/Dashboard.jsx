@@ -6,6 +6,7 @@ import { COLLECTIONS } from "../firebase/firestore";
 import { listAll } from "../services/adminService";
 import { ROUTES } from "../lib/constants";
 import { byDateDesc, formatDate, getFirebaseErrorMessage } from "../lib/utils";
+import ImportContent from "./ImportContent";
 
 function Stat({ label, value, to }) {
   return (
@@ -42,7 +43,8 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+      <ImportContent onDone={load} />
 
       <div className="mt-6">
         {state.status === "loading" && <LoadingState />}

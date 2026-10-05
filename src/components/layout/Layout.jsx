@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ScrollToTop from "./ScrollToTop";
+import { SiteProvider } from "../../context/SiteContext";
 
 export default function Layout() {
   return (
@@ -26,6 +27,11 @@ export default function Layout() {
           <Outlet />
         </Suspense>
       </main>
+          <SiteProvider>
+      <div className="flex min-h-screen flex-col">
+        {/* ...existing contents unchanged... */}
+      </div>
+    </SiteProvider>
       <Footer />
     </div>
   );
