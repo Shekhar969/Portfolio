@@ -3,13 +3,22 @@
 
 export const SITE = {
   name: "Shekhar Rawal",
-  role: "Quality Assurance ",
+  role: "Quality Assurance",
   location: "Nepal, Kanchanpur",
   shortBio:
     "I'm a developer interested in building useful software, intelligent systems, and practical solutions to real-world problems.",
   tagline: "Building useful software.",
   email: "shekharrawal96@gmail.com",
   url: "https://www.shekharrawal.com.np/",
+};
+
+// Path or URL of your resume PDF. Leave empty until you have one.
+// Example: "/resume.pdf" (file placed in the /public folder)
+export const RESUME_URL = "";
+
+// Turn the blog on later by setting this to true.
+export const FEATURES = {
+  blog: false,
 };
 
 export const ROUTES = {
@@ -23,13 +32,14 @@ export const ROUTES = {
   adminLogin: "/admin/login",
 };
 
+// FEATURES and ROUTES must be declared above this point.
 export const NAV_LINKS = [
   { label: "Home", to: ROUTES.home },
   { label: "Projects", to: ROUTES.projects },
   { label: "Blog", to: ROUTES.blog },
   { label: "Contact", to: ROUTES.contact },
   { label: "Resume", to: ROUTES.resume },
-];
+].filter((link) => link.to !== ROUTES.blog || FEATURES.blog);
 
 export const FOOTER_LINKS = NAV_LINKS;
 
@@ -37,8 +47,12 @@ export const FOOTER_LINKS = NAV_LINKS;
 // that have a real href.
 export const SOCIAL_LINKS = [
   { id: "github", label: "GitHub", href: "https://github.com/Shekhar969" },
-  { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/shekhar-singh-rawal-726324271/" },
-  { id: "email", label: "Email", href: "mailto:shekharrawal96@gamil.com" },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/shekhar-singh-rawal-726324271/",
+  },
+  { id: "email", label: "Email", href: "mailto:shekharrawal96@gmail.com" },
 ];
 
 export const PROJECT_CATEGORIES = [

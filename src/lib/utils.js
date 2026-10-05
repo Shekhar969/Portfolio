@@ -107,3 +107,22 @@ export function matchesQuery(query, ...fields) {
 export function byDateDesc(getDate) {
   return (a, b) => (toDate(getDate(b))?.getTime() || 0) - (toDate(getDate(a))?.getTime() || 0);
 }
+
+/** Friendly text for Firebase errors. */
+export function getFirebaseErrorMessage(error) {
+  switch (error?.code) {
+    case "permission-denied":
+      return "You don't have permission to view this content.";
+    case "unavailable":
+      return "Can't reach the server. Check your connection and try again.";
+    case "not-found":
+      return "That content could not be found.";
+    default:
+      return "Something went wrong. Please try again.";
+  }
+}
+
+/** Ascending comparator on a numeric sortOrder field. */
+export function bySortOrder(a, b) {
+  return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+}

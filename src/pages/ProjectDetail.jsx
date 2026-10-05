@@ -2,12 +2,15 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import Container from "../components/layout/Container";
 import Badge from "../components/ui/Badge";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
 import ArchitectureFlow from "../components/projects/ArchitectureFlow";
 import ProjectGallery from "../components/projects/ProjectGallery";
 import ProjectCard from "../components/projects/ProjectCard";
 import NotFound from "./NotFound";
+import { useProject, useProjects } from "../hooks/useProjects";
 import { PROJECT_STATUSES, ROUTES } from "../lib/constants";
-import { sampleProjects } from "../data/sampleData";
+import { getFirebaseErrorMessage } from "../lib/utils";
 
 const linkClass =
   "inline-flex items-center gap-1 rounded text-sm text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
@@ -35,8 +38,24 @@ function BulletList({ items }) {
 
 export default function ProjectDetail() {
   const { slug } = useParams();
-  // Phase 9: replace with getProjectBySlug(slug)
-  const project = sampleProjects.find((p) => p.slug === slug);
+  const { data: project, loading, error, reload } = useProject(slug);
+  const { data: allProjects } = useProjects();
+
+  if (loading) {
+    return (
+      <Container className="py-16">
+        <LoadingState />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-16">
+        <ErrorState message={getFirebaseErrorMessage(error)} onRetry={reload} />
+      </Container>
+    );
+  }
 
   if (!project) return <NotFound />;
 
@@ -52,10 +71,9 @@ export default function ProjectDetail() {
     liveUrl,
     caseStudy,
     gallery = [],
-    isPlaceholder,
   } = project;
 
-  const related = sampleProjects
+  const related = (allProjects ?? [])
     .filter(
       (p) =>
         p.id !== project.id && p.category?.some((c) => category.includes(c))
@@ -96,21 +114,25 @@ export default function ProjectDetail() {
         )}
       </dl>
 
-      {isPlaceholder && (
-        <p className="mt-4 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-          Sample content. Replace this with your real project details.
-        </p>
-      )}
-
       {(githubUrl || liveUrl) && (
         <div className="mt-4 flex gap-4">
           {githubUrl && (
-            <a href={githubUrl} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClass}
+            >
               GitHub <ArrowUpRight size={13} aria-hidden="true" />
             </a>
           )}
           {liveUrl && (
-            <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            <a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClass}
+            >
               Live demo <ArrowUpRight size={13} aria-hidden="true" />
             </a>
           )}
@@ -132,13 +154,17 @@ export default function ProjectDetail() {
       {caseStudy ? (
         <>
           <Section title="The problem">
-            {caseStudy.problem && <p className="leading-relaxed">{caseStudy.problem}</p>}
+            {caseStudy.problem && (
+              <p className="leading-relaxed">{caseStudy.problem}</p>
+            )}
           </Section>
           <Section title="Goals">
             <BulletList items={caseStudy.goals} />
           </Section>
           <Section title="The solution">
-            {caseStudy.solution && <p className="leading-relaxed">{caseStudy.solution}</p>}
+            {caseStudy.solution && (
+              <p className="leading-relaxed">{caseStudy.solution}</p>
+            )}
           </Section>
           <Section title="Architecture">
             {caseStudy.architecture?.length > 0 && (
@@ -159,7 +185,9 @@ export default function ProjectDetail() {
             <BulletList items={caseStudy.plannedFeatures} />
           </Section>
           <Section title="Implementation">
-            {caseStudy.implementation && <p className="leading-relaxed">{caseStudy.implementation}</p>}
+            {caseStudy.implementation && (
+              <p className="leading-relaxed">{caseStudy.implementation}</p>
+            )}
           </Section>
           <Section title="Challenges">
             <BulletList items={caseStudy.challenges} />
@@ -168,7 +196,9 @@ export default function ProjectDetail() {
             <BulletList items={caseStudy.tradeoffs} />
           </Section>
           <Section title="Results">
-            {caseStudy.results && <p className="leading-relaxed">{caseStudy.results}</p>}
+            {caseStudy.results && (
+              <p className="leading-relaxed">{caseStudy.results}</p>
+            )}
           </Section>
           <Section title="Lessons learned">
             <BulletList items={caseStudy.lessons} />
