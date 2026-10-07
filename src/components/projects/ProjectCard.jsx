@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
 import Badge from "../ui/Badge";
 import { PROJECT_STATUSES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
 
-const smallLink =
-  "inline-flex items-center gap-1 rounded text-sm text-muted-foreground transition-colors duration-150 hover:text-accent " +
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+const pill =
+  "inline-flex items-center rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors duration-150 " +
+  "hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 
 export default function ProjectCard({ project, className }) {
   const {
@@ -19,17 +18,36 @@ export default function ProjectCard({ project, className }) {
     status,
     githubUrl,
     liveUrl,
-    caseStudyContent,
-    isPlaceholder,
+    caseStudy,
+    gallery = [],
   } = project;
+
+  const thumb = gallery[0];
 
   return (
     <article
       className={cn(
-        "-mx-3 rounded-md px-3 py-4 transition-colors duration-150 hover:bg-muted/60",
+        "-mx-3 rounded-md px-3 py-5 transition-colors duration-150 hover:bg-muted/60",
         className
       )}
     >
+      {thumb?.url && (
+        <Link
+          to={`/projects/${slug}`}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="mb-4 block"
+        >
+          <img
+            src={thumb.thumbUrl || thumb.url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="aspect-video w-full rounded-md border border-border object-cover"
+          />
+        </Link>
+      )}
+
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h3 className="text-lg font-semibold tracking-tight">
           <Link
@@ -42,8 +60,9 @@ export default function ProjectCard({ project, className }) {
         {year && (
           <span className="font-mono text-xs text-muted-foreground">{year}</span>
         )}
-        {status && <Badge variant="outline">{PROJECT_STATUSES[status] || status}</Badge>}
-        {isPlaceholder && <Badge variant="accent">Sample</Badge>}
+        {status && (
+          <Badge variant="outline">{PROJECT_STATUSES[status] || status}</Badge>
+        )}
       </div>
 
       {subtitle && (
@@ -62,21 +81,21 @@ export default function ProjectCard({ project, className }) {
         </ul>
       )}
 
-      {(githubUrl || liveUrl || caseStudyContent) && (
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
-          {githubUrl && (
-            <a href={githubUrl} target="_blank" rel="noopener noreferrer" className={smallLink}>
-              GitHub <ArrowUpRight size={13} aria-hidden="true" />
-            </a>
-          )}
+      {(liveUrl || githubUrl || caseStudy) && (
+        <div className="mt-4 flex flex-wrap gap-2">
           {liveUrl && (
-            <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={smallLink}>
-              Demo <ArrowUpRight size={13} aria-hidden="true" />
+            <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={pill}>
+              Website
             </a>
           )}
-          {caseStudyContent && (
-            <Link to={`/projects/${slug}`} className={smallLink}>
-              Case study →
+          {githubUrl && (
+            <a href={githubUrl} target="_blank" rel="noopener noreferrer" className={pill}>
+              Source
+            </a>
+          )}
+          {caseStudy && (
+            <Link to={`/projects/${slug}`} className={pill}>
+              Case study
             </Link>
           )}
         </div>

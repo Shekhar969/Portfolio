@@ -1,69 +1,31 @@
-import { useRef } from "react";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import { THEMES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
 
-const OPTIONS = [
-  { value: THEMES.light, label: "Light", Icon: Sun },
-  { value: THEMES.dark, label: "Dark", Icon: Moon },
-  { value: THEMES.system, label: "System", Icon: Monitor },
-];
-
 export default function ThemeToggle({ className }) {
-  const { theme, setTheme } = useTheme();
-  const refs = useRef([]);
-
-  const handleKeyDown = (event, index) => {
-    let next = null;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      next = (index + 1) % OPTIONS.length;
-    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      next = (index - 1 + OPTIONS.length) % OPTIONS.length;
-    }
-    if (next !== null) {
-      event.preventDefault();
-      setTheme(OPTIONS[next].value);
-      refs.current[next]?.focus();
-    }
-  };
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === THEMES.dark;
+  const label = isDark ? "Switch to light mode" : "Switch to dark mode";
 
   return (
-    <div
-      role="radiogroup"
-      aria-label="Theme"
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? THEMES.light : THEMES.dark)}
+      aria-label={label}
+      title={label}
       className={cn(
-        "inline-flex items-center rounded-full border border-border p-0.5",
+        "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md sm:h-9 sm:w-9",
+        "text-muted-foreground transition-colors duration-150 hover:text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className
       )}
     >
-      {OPTIONS.map(({ value, label, Icon }, index) => {
-        const selected = theme === value;
-        return (
-          <button
-            key={value}
-            ref={(el) => (refs.current[index] = el)}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            aria-label={label}
-            title={label}
-            tabIndex={selected ? 0 : -1}
-            onClick={() => setTheme(value)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-            className={cn(
-              "inline-flex h-7 w-7 items-center justify-center rounded-full",
-              "transition-colors duration-150",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-              selected
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <Icon size={14} aria-hidden="true" />
-          </button>
-        );
-      })}
-    </div>
+      {isDark ? (
+        <Sun className="h-[18px] w-[18px] text-amber-400 sm:h-5 sm:w-5" aria-hidden="true" />
+      ) : (
+        <Moon className="h-[18px] w-[18px] sm:h-5 sm:w-5" aria-hidden="true" />
+      )}
+    </button>
   );
 }

@@ -60,6 +60,12 @@ export default function Footer() {
             Privacy
           </Link>
         </div>
+          <p className="mt-10 border-t border-border pt-6 text-sm text-muted-foreground">
+          © {new Date().getFullYear()} {site.name} |{" "}
+          <Link to={ROUTES.privacy} className={linkClass}>
+            privacy
+          </Link>
+        </p>
       </Container>
     </footer>
   );
