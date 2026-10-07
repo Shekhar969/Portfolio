@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "@fontsource-variable/inter";
 import "@fontsource/jetbrains-mono";
+import "@fontsource-variable/source-serif-4";
 import "./index.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeContext";

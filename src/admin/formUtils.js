@@ -153,9 +153,21 @@ export function validate(fields, values, { items = [], currentId = null } = {}) 
       errors[field.name] = "Enter a valid email address.";
     }
 
-    if (field.pathOrUrl && !IMAGE_PATTERN.test(value.trim())) {
-      errors[field.name] =
-        "Enter a path starting with / or a full https:// link.";
+    if (field.pathOrUrl) {
+      const entries = field.type === "lines" ? splitLines(value) : [value.trim()];
+      if (entries.some((entry) => !IMAGE_PATTERN.test(entry))) {
+        errors[field.name] =
+          field.type === "lines"
+            ? "Each line must start with / or https://"
+            : "Enter a path starting with / or a full https:// link.";
+      }
+    }
+    if (
+      field.maxItems &&
+      field.type === "lines" &&
+      splitLines(value).length > field.maxItems
+    ) {
+      errors[field.name] = `Add at most ${field.maxItems} items.`;
     }
 
     if (field.type === "links") {
