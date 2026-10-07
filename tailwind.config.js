@@ -17,9 +17,10 @@ export default {
       },
       fontFamily: {
         sans: ['"Inter Variable"', "system-ui", "sans-serif"],
+        serif: ['"Source Serif 4 Variable"', "Georgia", "serif"],
         mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
       },
-      maxWidth: { content: "1100px", prose: "720px" },
+      maxWidth: { content: "60rem", prose: "720px" },
     },
   },
   plugins: [require("@tailwindcss/typography")],

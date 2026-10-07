@@ -11,14 +11,63 @@ const FIELDS = [
   { name: "name", label: "Name", type: "text", required: true },
   { name: "role", label: "Role", type: "text", required: true },
   { name: "location", label: "Location", type: "text" },
-  { name: "shortBio", label: "Short bio (home page)", type: "textarea", rows: 3, required: true },
-  { name: "about", label: "About (longer, optional)", type: "textarea", rows: 6 },
-  { name: "email", label: "Public email", type: "text", email: true, help: "Leave empty to hide the Email link." },
-  { name: "profileImage", label: "Profile image", type: "text", pathOrUrl: true, help: "A path like /images/me.webp (file in public/images) or an https:// link. Leave empty for none." },
-  { name: "resumeUrl", label: "Resume link", type: "text", pathOrUrl: true, help: "e.g. /resume.pdf (file in public/). Leave empty to hide." },
-  { name: "githubUrl", label: "GitHub link", type: "text", url: true, placeholder: "https://github.com/…" },
-  { name: "linkedinUrl", label: "LinkedIn link", type: "text", url: true, placeholder: "https://www.linkedin.com/in/…" },
-  { name: "additionalLinks", label: "Other links", type: "links", rows: 3, help: "One per line: Label | https://…   (for example X, YouTube)" },
+  {
+    name: "shortBio",
+    label: "Short bio (home page)",
+    type: "textarea",
+    rows: 3,
+    required: true,
+  },
+  {
+    name: "about",
+    label: "About (longer, optional)",
+    type: "textarea",
+    rows: 6,
+  },
+  {
+    name: "email",
+    label: "Public email",
+    type: "text",
+    email: true,
+    help: "Leave empty to hide the Email link.",
+  },
+  {
+    name: "profileImages",
+    label: "Profile photos",
+    type: "lines",
+    rows: 4,
+    pathOrUrl: true,
+    maxItems: 6,
+    help: "One image per line, up to 6. Use a path like /images/me-1.webp (files in public/images) or an https:// link. The first photo is on top, and visitors swipe through the rest. Leave empty for none.",
+  },
+  {
+    name: "resumeUrl",
+    label: "Resume link",
+    type: "text",
+    pathOrUrl: true,
+    help: "e.g. /resume.pdf (file in public/). Leave empty to hide.",
+  },
+  {
+    name: "githubUrl",
+    label: "GitHub link",
+    type: "text",
+    url: true,
+    placeholder: "https://github.com/…",
+  },
+  {
+    name: "linkedinUrl",
+    label: "LinkedIn link",
+    type: "text",
+    url: true,
+    placeholder: "https://www.linkedin.com/in/…",
+  },
+  {
+    name: "additionalLinks",
+    label: "Other links",
+    type: "links",
+    rows: 3,
+    help: "One per line: Label | https://…   (for example X, YouTube)",
+  },
 ];
 
 export default function SettingsManager() {
@@ -34,7 +83,18 @@ export default function SettingsManager() {
     setValues(null);
     try {
       const data = await getPublicProfile();
-      setValues(toForm(FIELDS, data ?? {}));
+      const source = data ?? {};
+      setValues(
+        toForm(FIELDS, {
+          ...source,
+          // Older saves stored a single `profileImage`; show it as one line.
+          profileImages: Array.isArray(source.profileImages)
+            ? source.profileImages
+            : source.profileImage
+              ? [source.profileImage]
+              : [],
+        })
+      );
     } catch (error) {
       setLoadError(error);
     }
@@ -65,7 +125,8 @@ export default function SettingsManager() {
     setSaving(true);
     setSaveError("");
     try {
-      await saveProfile(fromForm(FIELDS, values));
+      // profileImage: "" clears the old single-image field.
+      await saveProfile({ ...fromForm(FIELDS, values), profileImage: "" });
       setNotice("Settings saved.");
     } catch (error) {
       setSaveError(getFirebaseErrorMessage(error));
@@ -78,16 +139,23 @@ export default function SettingsManager() {
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Your public details: name, bio, and links.
+        Your public details: name, bio, photos, and links.
       </p>
 
       <div className="mt-6">
         {loadError && (
-          <ErrorState message={getFirebaseErrorMessage(loadError)} onRetry={load} />
+          <ErrorState
+            message={getFirebaseErrorMessage(loadError)}
+            onRetry={load}
+          />
         )}
         {!loadError && !values && <LoadingState />}
         {values && (
-          <form onSubmit={handleSubmit} noValidate className="max-w-2xl space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="max-w-2xl space-y-6"
+          >
             {FIELDS.map((field) => (
               <FieldInput
                 key={field.name}
@@ -99,7 +167,10 @@ export default function SettingsManager() {
             ))}
 
             {saveError && (
-              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              <p
+                role="alert"
+                className="text-sm text-red-600 dark:text-red-400"
+              >
                 {saveError}
               </p>
             )}

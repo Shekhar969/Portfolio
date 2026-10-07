@@ -10,7 +10,7 @@ export function buildSite(profile) {
     return {
       ...SITE,
       about: "",
-      profileImage: "",
+      profileImages: [],
       resumeUrl: RESUME_URL,
       socialLinks: SOCIAL_LINKS,
     };
@@ -27,6 +27,13 @@ export function buildSite(profile) {
     })),
   ].filter(Boolean);
 
+  // Older saves stored a single `profileImage`; keep supporting it.
+  const profileImages = Array.isArray(profile.profileImages)
+    ? profile.profileImages.filter(Boolean)
+    : profile.profileImage
+      ? [profile.profileImage]
+      : [];
+
   return {
     ...SITE,
     name: profile.name || SITE.name,
@@ -35,7 +42,7 @@ export function buildSite(profile) {
     shortBio: profile.shortBio || SITE.shortBio,
     about: profile.about || "",
     email: profile.email || "",
-    profileImage: profile.profileImage || "",
+    profileImages,
     resumeUrl: profile.resumeUrl || "",
     socialLinks,
   };

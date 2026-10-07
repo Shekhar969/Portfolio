@@ -14,7 +14,7 @@ export default function Container({
   return (
     <Tag
       className={cn(
-        "mx-auto w-full px-4 sm:px-6 lg:px-10",
+        "mx-auto w-full px-[clamp(1.25rem,5vw,4rem)]",
         size === "prose" ? "max-w-prose" : "max-w-content",
         className
       )}
