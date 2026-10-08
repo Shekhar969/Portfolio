@@ -10,6 +10,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { HelmetProvider } from "react-helmet-async";
 import { SiteProvider } from "./context/SiteContext";
 
+<BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}></BrowserRouter>
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
 <ThemeProvider>

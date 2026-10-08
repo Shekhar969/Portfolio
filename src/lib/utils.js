@@ -126,3 +126,9 @@ export function getFirebaseErrorMessage(error) {
 export function bySortOrder(a, b) {
   return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
 }
+/** Prefixes site-relative paths (like /images/me.webp) with the base path. */
+export function assetUrl(path) {
+  if (!path || /^(https?:)?\/\//i.test(path) || path.startsWith("data:")) return path;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+}
