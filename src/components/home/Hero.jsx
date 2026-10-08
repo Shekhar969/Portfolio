@@ -7,12 +7,12 @@ import { useSite } from "../../hooks/useSite";
 import { ROUTES } from "../../lib/constants";
 import { cn } from "../../lib/utils";
 
-const SWIPE_DISTANCE = 60; // px you must drag before the photo moves on
+const SWIPE_DISTANCE = 40; // px you must drag before the photo moves on
 const FLING_MS = 220;
 const BEHIND = [
   "",
-  "translateX(-5px) rotate(-4deg)",
-  "translate(9px, 7px) rotate(3.5deg)",
+  "translateX(-8px) rotate(-6deg)",
+  "translate(12px, 5px) rotate(3.5deg)",
 ];
 
 function ProfileStack({ images, name }) {
@@ -180,8 +180,8 @@ function ProfileStack({ images, name }) {
                   <img
                     src={images[imageIndex]}
                     alt={isTop ? altFor(imageIndex) : ""}
-                    width="420"
-                    height="560"
+                    width="400"
+                    height="540"
                     decoding="async"
                     draggable={false}
                     onError={() =>
@@ -207,7 +207,7 @@ export default function Hero() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="overflow-x-clip pb-12 pt-10 sm:pt-14"
+      className="overflow-x-clip  pt-10 sm:pt-14"
     >
       <Container
         className={cn(
@@ -219,21 +219,23 @@ export default function Hero() {
         <div>
           <h1
             id="hero-heading"
-            className="font-serif text-[clamp(2rem,5vw,3.25rem)] font-bold lowercase leading-[1.05] tracking-tight"
+            className="font-serif text-[clamp(2rem,5dvh,3.25rem)] font-bold lowercase leading-[1.05] tracking-tight"
           >
-            hi, i'm {firstName}. <span aria-hidden="true">👋</span>
+            hi {firstName} here. <span aria-hidden="true">👋</span>
           </h1>
 
-          <p className="mt-2 text-[clamp(0.9375rem,1.7vw,1.125rem)] leading-snug text-foreground">
-            {site.role}
-            {site.location ? ` from ${site.location}` : ""}
+          <p className="mt-2 text-[clamp(0.9375rem,1.5dvh,1.125rem)] leading-snug text-foreground">
+            22yo {site.role}
+            {site.location
+              ? ` from ${site.location}${/nepal/i.test(site.location) ? " 🇳🇵" : ""}`
+              : ""}
           </p>
 
           <p className="mt-5 max-w-md text-[clamp(0.875rem,1.5vw,1rem)] leading-relaxed text-foreground/90">
             {site.shortBio}
           </p>
 
-          <p className="mt-6 text-[clamp(0.9375rem,1.6vw,1.0625rem)] font-semibold">
+          <p className="mt-6 text-[clamp(0.8rem,2vw,1.1rem)] font-semibold">
             <Link
               to={ROUTES.contact}
               className="inline-flex items-center gap-2 rounded hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -244,6 +246,18 @@ export default function Hero() {
                 aria-hidden="true"
               />
             </Link>
+          </p>
+          <p className="mt-1.5 whitespace-nowrap text-[clamp(0.6rem,2vw,0.9rem)] text-muted-foreground">
+            For any escalations, please find my{" "}
+            <a
+              href="https://www.instagram.com/shku.06/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded underline underline-offset-2 transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Quick Lead
+            </a>{" "}
+            instead.
           </p>
 
           <SocialLinks className="mt-5" />

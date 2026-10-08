@@ -14,7 +14,7 @@ function linkClass({ isActive }) {
     "transition-colors duration-150",
     focusRing,
     isActive
-      ? "text-foreground after:absolute after:inset-x-0.5 after:-bottom-0.5 after:h-px after:bg-accent"
+      ? "text-foreground"
       : "text-muted-foreground hover:text-foreground"
   );
 }
