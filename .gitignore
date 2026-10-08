@@ -27,3 +27,9 @@ dist-ssr
 firebase-debug.log
 functions/node_modules
 .DS_Store
+.yarn/*
+!.yarn/releases
+!.yarn/patches
+!.yarn/plugins
+.pnp.*
+public/sitemap.xml
