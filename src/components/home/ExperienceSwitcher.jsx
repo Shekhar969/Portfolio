@@ -14,7 +14,7 @@ export default function ExperienceSwitcher({ experience = [], education = [] }) 
   const [tab, setTab] = useState("work");
 
   return (
-    <section aria-label="Work and education" className="py-12">
+    <section aria-label="Work and education" className="py-8 sm:py-10">
       <Container>
         <Tabs tabs={TABS} value={tab} onChange={setTab} label="Work and education">
           <TabPanel id="work">

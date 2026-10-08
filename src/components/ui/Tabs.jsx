@@ -48,7 +48,8 @@ export default function Tabs({ tabs, value, onChange, label, className, children
         <div
           role="tablist"
           aria-label={label}
-          className="flex gap-6 border-b border-border"
+          className="grid gap-1 rounded-xl border border-border bg-muted p-1"
+          style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}
         >
           {tabs.map((tab, index) => {
             const selected = tab.id === value;
@@ -65,10 +66,10 @@ export default function Tabs({ tabs, value, onChange, label, className, children
                 onClick={() => onChange(tab.id)}
                 onKeyDown={(e) => onKeyDown(e, index)}
                 className={cn(
-                  "-mb-px border-b-2 py-2 text-sm font-medium transition-colors duration-150",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  "rounded-lg border py-1.5 text-center text-sm transition-colors duration-150",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                   selected
-                    ? "border-accent text-foreground"
+                    ? "border-border bg-background text-foreground"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -94,7 +95,7 @@ export function TabPanel({ id, className, children }) {
       aria-labelledby={`${prefix}-tab-${id}`}
       tabIndex={0}
       className={cn(
-        "animate-fade-in pt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+        "animate-fade-in pt-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
         className
       )}
     >

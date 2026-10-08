@@ -21,7 +21,7 @@ function linkClass({ isActive }) {
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
+   <header className="sticky top-0 z-40 bg-background/80 backdrop-blur">
       <Container className="flex items-center justify-between gap-3 py-2 sm:min-h-16">
         <nav
           aria-label="Main"
