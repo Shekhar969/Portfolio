@@ -1,16 +1,51 @@
-# React + Vite
+# Shekhar Rawal — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A modern, responsive personal portfolio website built to showcase my projects, technical skills, experience, and professional journey.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* **React** — UI development
+* **Vite** — Development and build tooling
+* **Tailwind CSS** — Styling and responsive design
+* **JavaScript** — Application logic
+* **Yarn** — Package management
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* Responsive and modern UI
+* Personal introduction and professional profile
+* Technical skills and experience
+* Featured projects and project details
+* Contact and social links
+* Smooth, interactive user experience
 
-## Expanding the Oxlint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Prerequisites
+
+* Node.js
+* Yarn
+
+### Installation
+
+```bash
+git clone https://github.com/Shekhar969/Portfolio.git
+cd Portfolio
+yarn
+yarn dev
+```
+
+The development server will start locally with Vite.
+
+## Build
+
+```bash
+yarn build
+```
+
+## Author
+
+**Shekhar Rawal**
+
+* GitHub: [@Shekhar969](https://github.com/Shekhar969)
+
