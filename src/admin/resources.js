@@ -66,18 +66,21 @@ const projectFields = [
 
 const experienceFields = [
   { name: "organization", label: "Organization", type: "text", required: true },
+  { name: "logoUrl", label: "Logo (optional)", type: "text", pathOrUrl: true, help: "A path like /images/logos/company.webp (file in public/images/logos) or an https:// link. A letter shows when empty." },
   { name: "role", label: "Role", type: "text", required: true },
   { name: "employmentType", label: "Employment type", type: "select", options: employmentOptions },
   { name: "dateLabel", label: "Dates", type: "text", required: true, placeholder: "e.g. 2025 — Present" },
   { name: "description", label: "Description", type: "textarea", rows: 4 },
   { name: "achievements", label: "Achievements", type: "lines", help: "One per line." },
   { name: "technologies", label: "Technologies", type: "tags", help: "Separate with commas." },
+  { name: "links", label: "Links (optional)", type: "links", rows: 2, help: "One per line: Label | https://…   Shown as small buttons, for example a project or website." },
   { name: "sortOrder", label: "Order (1 is shown first)", type: "number" },
   { name: "published", label: "Published (visible to visitors)", type: "checkbox" },
 ];
 
 const educationFields = [
   { name: "institution", label: "Institution", type: "text", required: true },
+  { name: "logoUrl", label: "Logo (optional)", type: "text", pathOrUrl: true, help: "A path like /images/logos/school.webp or an https:// link. A letter shows when empty." },
   { name: "qualification", label: "Degree / program", type: "text", required: true },
   { name: "dateLabel", label: "Dates", type: "text", required: true, placeholder: "e.g. 2021 — 2025" },
   { name: "description", label: "Description", type: "textarea", rows: 3 },
