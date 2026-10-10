@@ -1,16 +1,21 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import Container from "../components/layout/Container";
 import Badge from "../components/ui/Badge";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
 import ArchitectureFlow from "../components/projects/ArchitectureFlow";
 import ProjectGallery from "../components/projects/ProjectGallery";
 import ProjectCard from "../components/projects/ProjectCard";
+import ArticleContent from "../components/blog/ArticleContent";
 import NotFound from "./NotFound";
-import { projects } from "../data/content";
+import { useProject, useProjects } from "../hooks/useProjects";
 import { PROJECT_STATUSES, ROUTES } from "../lib/constants";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { cn, getFirebaseErrorMessage } from "../lib/utils";
 
+/** One line of text: bold, italic, strikethrough, code, and links only. */
 function Inline({ text }) {
   return (
     <ReactMarkdown
@@ -55,22 +60,52 @@ function Section({ title, children }) {
   );
 }
 
+/** Bullets by default; if every line starts with 1. 2. 3. it becomes numbered. */
 function BulletList({ items }) {
   if (!items?.length) return null;
+
+  const numbered = items.every((item) => /^\d+[.)]\s+/.test(item));
+  const clean = items.map((item) =>
+    item.replace(numbered ? /^\d+[.)]\s+/ : /^[-*•]\s+/, "")
+  );
+  const Tag = numbered ? "ol" : "ul";
+
   return (
-    <ul className="list-disc space-y-1 pl-5 leading-relaxed marker:text-muted-foreground">
-      {items.map((item) => (
-<li key={`${index}-${item}`}>
+    <Tag
+      className={cn(
+        "space-y-1 pl-5 leading-relaxed marker:text-muted-foreground",
+        numbered ? "list-decimal" : "list-disc"
+      )}
+    >
+      {clean.map((item, index) => (
+        <li key={`${index}-${item}`}>
           <Inline text={item} />
         </li>
       ))}
-    </ul>
+    </Tag>
   );
 }
 
 export default function ProjectDetail() {
   const { slug } = useParams();
-  const project = projects.find((p) => p.slug === slug);
+  const { data: project, loading, error, reload } = useProject(slug);
+  const { data: allProjects } = useProjects();
+
+  if (loading) {
+    return (
+      <Container className="py-16">
+        <LoadingState />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-16">
+        <ErrorState message={getFirebaseErrorMessage(error)} onRetry={reload} />
+      </Container>
+    );
+  }
 
   if (!project) return <NotFound />;
 
@@ -88,7 +123,7 @@ export default function ProjectDetail() {
     gallery = [],
   } = project;
 
-  const related = projects
+  const related = (allProjects ?? [])
     .filter(
       (p) =>
         p.id !== project.id && p.category?.some((c) => category.includes(c))
@@ -96,7 +131,7 @@ export default function ProjectDetail() {
     .slice(0, 2);
 
   return (
-    <Container size="prose" className="py-16">
+    <Container  className="py-16">
       <Link
         to={ROUTES.projects}
         className="inline-flex items-center gap-1 rounded text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -159,13 +194,13 @@ export default function ProjectDetail() {
       {caseStudy ? (
         <>
           <Section title="The problem">
-            {caseStudy.problem && <p className="leading-relaxed">{caseStudy.problem}</p>}
+            {caseStudy.problem && <ArticleContent content={caseStudy.problem} />}
           </Section>
           <Section title="Goals">
             <BulletList items={caseStudy.goals} />
           </Section>
           <Section title="The solution">
-            {caseStudy.solution && <p className="leading-relaxed">{caseStudy.solution}</p>}
+            {caseStudy.solution && <ArticleContent content={caseStudy.solution} />}
           </Section>
           <Section title="Architecture">
             {caseStudy.architecture?.length > 0 && (
@@ -187,7 +222,7 @@ export default function ProjectDetail() {
           </Section>
           <Section title="Implementation">
             {caseStudy.implementation && (
-              <p className="leading-relaxed">{caseStudy.implementation}</p>
+              <ArticleContent content={caseStudy.implementation} />
             )}
           </Section>
           <Section title="Challenges">
@@ -197,7 +232,7 @@ export default function ProjectDetail() {
             <BulletList items={caseStudy.tradeoffs} />
           </Section>
           <Section title="Results">
-            {caseStudy.results && <p className="leading-relaxed">{caseStudy.results}</p>}
+            {caseStudy.results && <ArticleContent content={caseStudy.results} />}
           </Section>
           <Section title="Lessons learned">
             <BulletList items={caseStudy.lessons} />

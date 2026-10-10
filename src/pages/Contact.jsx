@@ -6,7 +6,7 @@ export default function Contact() {
   const links = SOCIAL_LINKS.filter((item) => item.href);
 
   return (
-    <Container size="prose" className="py-16">
+    <Container className="py-16">
       <h1 className="text-4xl font-semibold tracking-tight">Get in touch.</h1>
       <p className="mt-3 text-muted-foreground">
         Have a question, an opportunity, or an idea to discuss? Send a message below
