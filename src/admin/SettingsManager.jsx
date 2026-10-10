@@ -22,7 +22,9 @@ const FIELDS = [
     name: "about",
     label: "About (longer, optional)",
     type: "textarea",
-    rows: 6,
+    rich: true,
+    rows: 8,
+    help: "Use the toolbar or shortcuts (Ctrl/Cmd+B bold, I italic, K link). Click Preview to see how it will look.",
   },
   {
     name: "email",
