@@ -12,7 +12,7 @@ function Section({ title, children }) {
 
 export default function Privacy() {
   return (
-    <Container size="prose" className="py-16">
+    <Container  className="py-16">
       <h1 className="text-4xl font-semibold tracking-tight">Privacy</h1>
       <p className="mt-3 text-muted-foreground">
         This page explains what this website does with information. It is written to

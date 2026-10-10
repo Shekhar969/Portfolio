@@ -44,20 +44,22 @@ export default function SocialLinks({ className }) {
         className
       )}
     >
-      {site.resumeUrl && (
-        <Link
-          to={ROUTES.resume}
-          className={cn(
-            "inline-flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2.5 sm:px-5 sm:py-3",
-            "text-[clamp(0.9375rem,2vw,1.125rem)] font-semibold",
-            "transition-colors duration-150 hover:border-accent hover:text-accent",
-            focusRing
-          )}
-        >
-          Resume
-          <FileDown className="h-5 w-5" aria-hidden="true" />
-        </Link>
-      )}
+{site.resumeUrl && (
+  <a
+    href={site.resumeUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={cn(
+      "inline-flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-2.5 sm:px-5 sm:py-3",
+      "text-[clamp(0.9375rem,2vw,1.125rem)] font-semibold",
+      "transition-colors duration-150 hover:border-accent hover:text-accent",
+      focusRing
+    )}
+  >
+    Resume
+    <FileDown className="h-5 w-5" aria-hidden="true" />
+  </a>
+)}
 
       {links.length > 0 && (
         <ul className="flex items-center gap-1 sm:gap-2">

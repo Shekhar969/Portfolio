@@ -14,7 +14,7 @@ export const SITE = {
 
 // Path or URL of your resume PDF. Leave empty until you have one.
 // Example: "/resume.pdf" (file placed in the /public folder)
-export const RESUME_URL = "";
+export const RESUME_URL = "/personal/doc/Shekhar_Rawal_Resume.pdf";
 
 // Turn the blog on later by setting this to true.
 export const FEATURES = {
