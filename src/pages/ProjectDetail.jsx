@@ -8,6 +8,39 @@ import ProjectCard from "../components/projects/ProjectCard";
 import NotFound from "./NotFound";
 import { projects } from "../data/content";
 import { PROJECT_STATUSES, ROUTES } from "../lib/constants";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+function Inline({ text }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      allowedElements={["p", "strong", "em", "del", "code", "a"]}
+      unwrapDisallowed
+      components={{
+        p: ({ children }) => <>{children}</>,
+        a: ({ href = "", children }) => (
+          <a
+            href={href}
+            {...(/^https?:/i.test(href)
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
+            className="text-accent underline underline-offset-2"
+          >
+            {children}
+          </a>
+        ),
+        code: ({ children }) => (
+          <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">
+            {children}
+          </code>
+        ),
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
+}
 
 const linkClass =
   "inline-flex items-center gap-1 rounded text-sm text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
@@ -27,7 +60,9 @@ function BulletList({ items }) {
   return (
     <ul className="list-disc space-y-1 pl-5 leading-relaxed marker:text-muted-foreground">
       {items.map((item) => (
-        <li key={item}>{item}</li>
+<li key={`${index}-${item}`}>
+          <Inline text={item} />
+        </li>
       ))}
     </ul>
   );

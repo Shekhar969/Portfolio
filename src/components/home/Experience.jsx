@@ -2,7 +2,77 @@ import { Globe } from "lucide-react";
 import Badge from "../ui/Badge";
 import InitialAvatar from "../ui/InitialAvatar";
 import { formatDateRange } from "../../lib/utils";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
+const linkProps = (href = "") =>
+  /^https?:/i.test(href) ? { target: "_blank", rel: "noopener noreferrer" } : {};
+
+const baseComponents = {
+  a: ({ href = "", children }) => (
+    <a
+      href={href}
+      {...linkProps(href)}
+      className="text-accent underline underline-offset-2"
+    >
+      {children}
+    </a>
+  ),
+  code: ({ children }) => (
+    <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">
+      {children}
+    </code>
+  ),
+};
+
+/** One line of text: bold, italic, strikethrough, code, and links only. */
+export function InlineMarkdown({ text }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      allowedElements={["p", "strong", "em", "del", "code", "a"]}
+      unwrapDisallowed
+      components={{ ...baseComponents, p: ({ children }) => <>{children}</> }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
+}
+
+/** A description: paragraphs, bullet and numbered lists, quotes, and the above. */
+function RichDescription({ text }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      allowedElements={[
+        "p", "strong", "em", "del", "code", "a",
+        "ul", "ol", "li", "blockquote",
+      ]}
+      unwrapDisallowed
+      components={{
+        ...baseComponents,
+        p: ({ children }) => <p className="mt-2 first:mt-0">{children}</p>,
+        ul: ({ children }) => (
+          <ul className="mt-2 list-disc space-y-0.5 pl-5 marker:text-muted-foreground">
+            {children}
+          </ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="mt-2 list-decimal space-y-0.5 pl-5 marker:text-muted-foreground">
+            {children}
+          </ol>
+        ),
+        blockquote: ({ children }) => (
+          <blockquote className="mt-2 border-l-2 border-border pl-3 text-muted-foreground">
+            {children}
+          </blockquote>
+        ),
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
+}
 /**
  * Groups neighbouring items that share a title (company or school), so the
  * name is shown once with several roles under it.
@@ -61,15 +131,17 @@ export function Timeline({ groups, subtitleOf }) {
                     </div>
 
                     {item.description && (
-                      <p className="mt-2 text-[13px] leading-relaxed sm:text-sm">
-                        {item.description}
-                      </p>
+                      <div className="mt-2 text-[13px] leading-relaxed sm:text-sm">
+                        <RichDescription text={item.description} />
+                      </div>
                     )}
 
                     {item.achievements?.length > 0 && (
                       <ul className="mt-2 list-disc space-y-0.5 pl-5 text-[13px] leading-relaxed marker:text-muted-foreground sm:text-sm">
                         {item.achievements.map((achievement, i) => (
-                          <li key={i}>{achievement}</li>
+                          <li key={i}>
+                            <InlineMarkdown text={achievement} />
+                          </li>
                         ))}
                       </ul>
                     )}
@@ -96,7 +168,7 @@ export function Timeline({ groups, subtitleOf }) {
                       <ul className="mt-3 flex flex-wrap gap-1.5">
                         {item.technologies.map((tech) => (
                           <li key={tech}>
-<span className="inline-flex items-center rounded border border-border px-2 py-0.5 font-mono text-xs text-foreground/80">
+                            <span className="inline-flex items-center rounded border border-border px-2 py-0.5 font-mono text-xs text-foreground/80">
                               {tech}
                             </span>
                           </li>
