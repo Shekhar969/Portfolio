@@ -41,6 +41,7 @@ const FIELDS = [
     pathOrUrl: true,
     maxItems: 6,
     help: "One image per line, up to 6. Use a path like /images/me-1.webp (files in public/images) or an https:// link. The first photo is on top, and visitors swipe through the rest. Leave empty for none.",
+    upload: { folder: "images", accept: "image/*", hint: "Add one or several photos. Each path is added on its own line." },
   },
   {
     name: "resumeUrl",
@@ -48,6 +49,8 @@ const FIELDS = [
     type: "text",
     pathOrUrl: true,
     help: "e.g. /resume.pdf (file in public/). Leave empty to hide.",
+    // inside the resumeUrl object:
+    upload: { folder: "root", accept: "application/pdf", hint: "Your resume as a PDF. Tick “Replace a file with the same name” to update an existing resume.pdf." },
   },
   {
     name: "githubUrl",
