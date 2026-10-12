@@ -65,6 +65,21 @@ const projectFields = [
     placeholder: "https://…",
   },
   {
+    name: "previewVideo",
+    label: "Hover preview video (optional)",
+    type: "text",
+    pathOrUrl: true,
+    placeholder: "/videos/my-project.mp4",
+    help: "A short silent loop (MP4, under 2 MB). Put the file in public/videos/ and enter /videos/name.mp4. It plays when visitors hover the card. The first screenshot below is the picture shown before that.",
+  },
+  {
+    name: "links",
+    label: "Extra links (optional)",
+    type: "links",
+    rows: 2,
+    help: "One per line: Label | https://…   For example: Source (UI) | https://github.com/…",
+  },
+  {
     name: "gallery",
     label: "Screenshots",
     type: "gallery",
