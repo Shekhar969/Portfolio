@@ -64,14 +64,7 @@ const projectFields = [
     url: true,
     placeholder: "https://…",
   },
-  {
-    name: "previewVideo",
-    label: "Hover preview video (optional)",
-    type: "text",
-    pathOrUrl: true,
-    placeholder: "/videos/my-project.mp4",
-    help: "A short silent loop (MP4, under 2 MB). Put the file in public/videos/ and enter /videos/name.mp4. It plays when visitors hover the card. The first screenshot below is the picture shown before that.",
-  },
+  { name: "previewVideo", label: "Hover preview video (optional)", type: "text", pathOrUrl: true, placeholder: "/videos/my-project.mp4", help: "A short silent loop (MP4, under 2 MB). It plays when visitors hover the card. The first screenshot below is the picture shown before that.", upload: { folder: "videos", accept: "video/mp4,video/webm", hint: "MP4 or WebM, a short silent loop." } },
   {
     name: "links",
     label: "Extra links (optional)",
@@ -79,14 +72,7 @@ const projectFields = [
     rows: 2,
     help: "One per line: Label | https://…   For example: Source (UI) | https://github.com/…",
   },
-  {
-    name: "gallery",
-    label: "Screenshots",
-    type: "gallery",
-    rows: 4,
-    placeholder: "/images/shot-1.webp | Description of the screenshot",
-    help: "One image per line: the image path or link, then | and a short description. Put files in public/images/ and use /images/name.webp.",
-  },
+  { name: "gallery", label: "Screenshots", type: "gallery", rows: 4, placeholder: "/images/shot-1.webp | Description of the screenshot", help: "One image per line: the path, then | and a short description. The first one is the card picture.", upload: { folder: "images", accept: "image/*", hint: "PNG, JPG, or WebP. The path is added to the list for you." } },
   {
     name: "caseStudy",
     label: "Case study (optional)",
@@ -115,12 +101,7 @@ const projectFields = [
         rows: 5,
         help: textHelp,
       },
-      {
-        name: "architecture",
-        label: "Architecture steps",
-        type: "lines",
-        help: "One step per line, in order.",
-      },
+      { name: "architecture", label: "Architecture steps", type: "lines", rich: true, help: "One step per line, in order." },
       {
         name: "implementedFeatures",
         label: "Implemented features",
@@ -187,13 +168,7 @@ const projectFields = [
 
 const experienceFields = [
   { name: "organization", label: "Organization", type: "text", required: true },
-  {
-    name: "logoUrl",
-    label: "Logo (optional)",
-    type: "text",
-    pathOrUrl: true,
-    help: "A path like /images/logos/company.webp (file in public/images/logos) or an https:// link. A letter shows when empty.",
-  },
+  { name: "logoUrl", label: "Logo (optional)", type: "text", pathOrUrl: true, help: "A letter shows when empty.", upload: { folder: "images/logos", accept: "image/*", hint: "A square logo works best." } },
   { name: "role", label: "Role", type: "text", required: true },
   {
     name: "employmentType",
@@ -224,13 +199,7 @@ const experienceFields = [
 
 const educationFields = [
   { name: "institution", label: "Institution", type: "text", required: true },
-  {
-    name: "logoUrl",
-    label: "Logo (optional)",
-    type: "text",
-    pathOrUrl: true,
-    help: "A path like /images/logos/school.webp or an https:// link. A letter shows when empty.",
-  },
+  { name: "logoUrl", label: "Logo (optional)", type: "text", pathOrUrl: true, help: "A letter shows when empty.", upload: { folder: "images/logos", accept: "image/*", hint: "A square logo works best." } },
   { name: "qualification", label: "Degree / program", type: "text", required: true },
   {
     name: "dateLabel",

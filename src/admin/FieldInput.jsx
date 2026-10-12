@@ -10,6 +10,8 @@ import {
   Pencil,
   Quote,
   Strikethrough,
+  UploadCloud,
+  X,
 } from "lucide-react";
 import Input from "../components/ui/Input";
 import Textarea from "../components/ui/Textarea";
@@ -92,6 +94,17 @@ const ACTIONS = {
   quote: (v, s, e) => toggleLinePrefix(v, s, e, () => "> ", QUOTE, QUOTE),
 };
 
+/** One-item-per-line boxes preview as the real list visitors will see. */
+function linesToMarkdown(text) {
+  const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+  const numbered = lines.length > 0 && lines.every((line) => NUMBER.test(line));
+  return lines
+    .map((line) =>
+      numbered ? line : ANY_MARKER.test(line) ? line.replace(ANY_MARKER, "- ") : `- ${line}`
+    )
+    .join("\n");
+}
+
 const buttonClass =
   "inline-flex h-8 w-8 items-center justify-center rounded text-muted-foreground transition-colors duration-150 " +
   "hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
@@ -114,13 +127,12 @@ function Divider() {
   return <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />;
 }
 
-/* ---------- Text box with a formatting toolbar ---------- */
+/* ---------- Text box with the full formatting toolbar ---------- */
 
 function RichTextField({ field, value, onChange, error }) {
   const id = useId();
   const ref = useRef(null);
   const [preview, setPreview] = useState(false);
-  const full = Boolean(field.rich);
 
   const run = (action) => {
     const el = ref.current;
@@ -135,17 +147,15 @@ function RichTextField({ field, value, onChange, error }) {
 
   const onKeyDown = (event) => {
     if (!(event.metaKey || event.ctrlKey)) return;
-    const shortcuts = {
-      b: ACTIONS.bold,
-      i: ACTIONS.italic,
-      k: ACTIONS.link,
-    };
+    const shortcuts = { b: ACTIONS.bold, i: ACTIONS.italic, k: ACTIONS.link };
     const action = shortcuts[event.key.toLowerCase()];
     if (action) {
       event.preventDefault();
       run(action);
     }
   };
+
+  const previewSource = field.type === "lines" ? linesToMarkdown(value) : value;
 
   return (
     <div>
@@ -165,22 +175,16 @@ function RichTextField({ field, value, onChange, error }) {
             <ToolbarButton label="Strikethrough" onClick={() => run(ACTIONS.strike)}>
               <Strikethrough size={16} aria-hidden="true" />
             </ToolbarButton>
-
-            {full && (
-              <>
-                <Divider />
-                <ToolbarButton label="Bullet list" onClick={() => run(ACTIONS.bullets)}>
-                  <List size={16} aria-hidden="true" />
-                </ToolbarButton>
-                <ToolbarButton label="Numbered list" onClick={() => run(ACTIONS.numbers)}>
-                  <ListOrdered size={16} aria-hidden="true" />
-                </ToolbarButton>
-                <ToolbarButton label="Quote" onClick={() => run(ACTIONS.quote)}>
-                  <Quote size={16} aria-hidden="true" />
-                </ToolbarButton>
-              </>
-            )}
-
+            <Divider />
+            <ToolbarButton label="Bullet list" onClick={() => run(ACTIONS.bullets)}>
+              <List size={16} aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Numbered list" onClick={() => run(ACTIONS.numbers)}>
+              <ListOrdered size={16} aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Quote" onClick={() => run(ACTIONS.quote)}>
+              <Quote size={16} aria-hidden="true" />
+            </ToolbarButton>
             <Divider />
             <ToolbarButton label="Link (Ctrl/Cmd+K)" onClick={() => run(ACTIONS.link)}>
               <Link2 size={16} aria-hidden="true" />
@@ -191,30 +195,25 @@ function RichTextField({ field, value, onChange, error }) {
           </>
         )}
 
-        {full && (
-          <button
-            type="button"
-            onClick={() => setPreview((prev) => !prev)}
-            aria-pressed={preview}
-            className={cn(
-              "ml-auto inline-flex h-8 items-center gap-1.5 rounded px-2 text-xs text-muted-foreground",
-              "hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            )}
-          >
-            {preview ? (
-              <Pencil size={14} aria-hidden="true" />
-            ) : (
-              <Eye size={14} aria-hidden="true" />
-            )}
-            {preview ? "Edit" : "Preview"}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => setPreview((prev) => !prev)}
+          aria-pressed={preview}
+          className="ml-auto inline-flex h-8 items-center gap-1.5 rounded px-2 text-xs text-muted-foreground hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          {preview ? (
+            <Pencil size={14} aria-hidden="true" />
+          ) : (
+            <Eye size={14} aria-hidden="true" />
+          )}
+          {preview ? "Edit" : "Preview"}
+        </button>
       </div>
 
       {preview ? (
         <div className="min-h-[8rem] rounded-b-md border border-border bg-card p-4">
-          {value.trim() ? (
-            <ArticleContent content={value} />
+          {previewSource.trim() ? (
+            <ArticleContent content={previewSource} />
           ) : (
             <p className="text-sm text-muted-foreground">Nothing to preview yet.</p>
           )}
@@ -224,7 +223,7 @@ function RichTextField({ field, value, onChange, error }) {
           id={id}
           ref={ref}
           name={field.name}
-          rows={field.rows ?? (full ? 6 : 5)}
+          rows={field.rows ?? 6}
           value={value}
           placeholder={field.placeholder}
           onChange={(e) => onChange(e.target.value)}
@@ -238,9 +237,311 @@ function RichTextField({ field, value, onChange, error }) {
   );
 }
 
+/* ---------- Drag-and-drop upload (works with `yarn dev` only) ---------- */
+
+const FOLDER_OPTIONS = [
+  { value: "images", label: "public/images" },
+  { value: "images/logos", label: "public/images/logos" },
+  { value: "videos", label: "public/videos" },
+  { value: "files", label: "public/files" },
+  { value: "root", label: "public (top level)" },
+  { value: "custom", label: "Custom folder…" },
+];
+
+const formatSize = (bytes) =>
+  bytes < 1024 * 1024
+    ? `${Math.max(1, Math.round(bytes / 1024))} KB`
+    : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+
+/** PNG/JPG -> smaller WebP (max 1600px wide). Falls back to the original file. */
+async function prepareFile(file, convert) {
+  if (!convert || !/^image\/(png|jpeg)$/.test(file.type)) {
+    return { blob: file, name: file.name };
+  }
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 1600 / bitmap.width);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/webp", 0.85)
+    );
+    if (blob && blob.type === "image/webp") {
+      return { blob, name: file.name.replace(/\.[^.]+$/, "") + ".webp" };
+    }
+  } catch {
+    // Fall back to the original file below.
+  }
+  return { blob: file, name: file.name };
+}
+
+function UploadZone({ field, value, onChange }) {
+  const config = field.upload;
+  const id = useId();
+  const inputRef = useRef(null);
+  const [pending, setPending] = useState([]);
+  const [dragging, setDragging] = useState(false);
+  const [folder, setFolder] = useState(config.folder || "images");
+  const [custom, setCustom] = useState("");
+  const [convert, setConvert] = useState(true);
+  const [replace, setReplace] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const single = field.type === "text";
+
+  if (!import.meta.env.DEV) {
+    return (
+      <p className="mt-2 text-xs text-muted-foreground">
+        Uploads work when you run <code>yarn dev</code> on your computer: they
+        save into the <code>public</code> folder, which you then commit and push.
+      </p>
+    );
+  }
+
+  const folderPath =
+    folder === "root"
+      ? ""
+      : folder === "custom"
+        ? custom.trim().replace(/^\/+|\/+$/g, "")
+        : folder;
+  const locationLabel = `public${folderPath ? `/${folderPath}` : ""}`;
+
+  const stage = (fileList) => {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    setError("");
+    setMessage("");
+    setPending(single ? files.slice(0, 1) : files);
+  };
+
+  const apply = (items) => {
+    if (single) {
+      onChange(items[0].path);
+      return;
+    }
+    const lines = items.map((item) =>
+      field.type === "gallery" ? `${item.path} | ${item.label}` : item.path
+    );
+    onChange([value.trim(), ...lines].filter(Boolean).join("\n"));
+  };
+
+  const save = async () => {
+    setBusy(true);
+    setError("");
+    setMessage("");
+    const saved = [];
+    try {
+      for (const file of pending) {
+        const { blob, name } = await prepareFile(file, convert);
+        const query = new URLSearchParams({
+          folder: folderPath,
+          name,
+          ...(replace ? { overwrite: "1" } : {}),
+        });
+        const response = await fetch(`/__dev/upload?${query}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/octet-stream" },
+          body: blob,
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Could not save ${file.name}.`);
+        saved.push({
+          path: data.path,
+          label: data.path
+            .split("/")
+            .pop()
+            .replace(/\.[^.]+$/, "")
+            .replace(/[-_]+/g, " "),
+        });
+      }
+      apply(saved);
+      setPending([]);
+      setMessage(
+        `Saved ${saved.length} file${saved.length > 1 ? "s" : ""} to ${locationLabel} and added the path.`
+      );
+    } catch (err) {
+      if (saved.length) apply(saved);
+      setError(err.message || "Upload failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const hasConvertible = pending.some((f) => /^image\/(png|jpeg)$/.test(f.type));
+  const bigVideo = pending.some(
+    (f) => f.type.startsWith("video/") && f.size > 2 * 1024 * 1024
+  );
+
+  return (
+    <div className="mt-3">
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          stage(e.dataTransfer.files);
+        }}
+        className={cn(
+          "rounded-2xl border border-dashed p-5 text-center transition-colors duration-150",
+          dragging ? "border-accent bg-muted" : "border-border"
+        )}
+      >
+        <UploadCloud className="mx-auto h-6 w-6 text-muted-foreground" aria-hidden="true" />
+        <p className="mt-2 font-medium">Drop files here</p>
+        {config.hint && (
+          <p className="mt-1 text-sm text-muted-foreground">{config.hint}</p>
+        )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept={config.accept}
+          multiple={!single}
+          tabIndex={-1}
+          className="sr-only"
+          onChange={(e) => {
+            stage(e.target.files);
+            e.target.value = "";
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="mt-3 rounded-full border border-border px-4 py-1.5 text-sm font-medium transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          Browse files
+        </button>
+      </div>
+
+      {pending.length > 0 && (
+        <div className="mt-3 space-y-3 rounded-md border border-border p-4 text-left">
+          <ul className="space-y-1 text-sm">
+            {pending.map((file, index) => (
+              <li
+                key={`${file.name}-${index}`}
+                className="flex items-center justify-between gap-3"
+              >
+                <span className="truncate">{file.name}</span>
+                <span className="flex shrink-0 items-center gap-2 font-mono text-xs text-muted-foreground">
+                  {formatSize(file.size)}
+                  <button
+                    type="button"
+                    aria-label={`Remove ${file.name}`}
+                    onClick={() =>
+                      setPending((prev) => prev.filter((_, i) => i !== index))
+                    }
+                    className="rounded p-0.5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    <X size={14} aria-hidden="true" />
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div>
+            <label htmlFor={`${id}-folder`} className="mb-1.5 block text-sm font-medium">
+              Save to
+            </label>
+            <select
+              id={`${id}-folder`}
+              value={folder}
+              onChange={(e) => setFolder(e.target.value)}
+              className={selectClass}
+            >
+              {FOLDER_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {folder === "custom" && (
+              <input
+                type="text"
+                aria-label="Custom folder inside public"
+                value={custom}
+                onChange={(e) => setCustom(e.target.value)}
+                placeholder="e.g. images/argus"
+                className="mt-2 h-10 w-full rounded-md border border-border bg-card px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              />
+            )}
+          </div>
+
+          {hasConvertible && (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={convert}
+                onChange={(e) => setConvert(e.target.checked)}
+                className="h-4 w-4 rounded border-border accent-accent"
+              />
+              Convert PNG/JPG to smaller WebP
+            </label>
+          )}
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={replace}
+              onChange={(e) => setReplace(e.target.checked)}
+              className="h-4 w-4 rounded border-border accent-accent"
+            />
+            Replace a file with the same name
+          </label>
+
+          {bigVideo && (
+            <p className="text-xs text-muted-foreground">
+              This video is over 2 MB. Short silent loops under 2 MB load faster on hover.
+            </p>
+          )}
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={save}
+              disabled={busy}
+              className="inline-flex h-9 items-center rounded-md bg-accent px-4 text-sm font-medium text-accent-foreground transition-opacity duration-150 hover:opacity-90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              {busy
+                ? "Saving…"
+                : `Save ${pending.length} file${pending.length > 1 ? "s" : ""} to ${locationLabel}`}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPending([])}
+              disabled={busy}
+              className="inline-flex h-9 items-center rounded-md border border-border px-4 text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {message && (
+        <p role="status" className="mt-2 text-sm text-accent">
+          {message}
+        </p>
+      )}
+      {error && (
+        <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /* ---------- The field switcher ---------- */
 
-export default function FieldInput({ field, value, onChange, error }) {
+function FieldControl({ field, value, onChange, error }) {
   const id = useId();
   const { type, name, label, help, rows, options, placeholder } = field;
 
@@ -330,7 +631,7 @@ export default function FieldInput({ field, value, onChange, error }) {
     );
   }
 
-  if ((type === "textarea" && field.rich) || (type === "lines" && field.inline)) {
+  if ((type === "textarea" || type === "lines") && (field.rich || field.inline)) {
     return (
       <RichTextField field={field} value={value} onChange={onChange} error={error} />
     );
@@ -366,6 +667,18 @@ export default function FieldInput({ field, value, onChange, error }) {
         error={error}
       />
       <Help text={help} />
+    </div>
+  );
+}
+
+export default function FieldInput(props) {
+  const { field, value, onChange } = props;
+  return (
+    <div>
+      <FieldControl {...props} />
+      {field.upload && (
+        <UploadZone field={field} value={value} onChange={onChange} />
+      )}
     </div>
   );
 }
