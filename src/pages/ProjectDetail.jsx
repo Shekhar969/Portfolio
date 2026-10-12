@@ -253,7 +253,7 @@ export default function ProjectDetail() {
 
       {related.length > 0 && (
         <Section title="Related projects">
-          <div className="divide-y divide-border">
+          <div className="grid gap-4">
             {related.map((item) => (
               <ProjectCard key={item.id} project={item} />
             ))}

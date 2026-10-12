@@ -38,11 +38,10 @@ export default function Projects() {
   };
 
   return (
-    <Container className="py-16">
-      <h1 className="text-4xl font-semibold tracking-tight">Projects</h1>
-      <p className="mt-3 max-w-2xl text-muted-foreground">
-        Things I build, from computer vision experiments to IoT systems and web apps.
-      </p>
+    <Container className="py-12 sm:py-16">
+      <h1 className="font-serif text-[clamp(2rem,5.5vw,3.5rem)] font-bold lowercase leading-[1.05] tracking-tight">
+        my projects.
+      </h1>
 
       <div className="mt-8">
         <ProjectFilters
@@ -58,15 +57,11 @@ export default function Projects() {
           aria-live="polite"
           className="mt-6 font-mono text-xs text-muted-foreground"
         >
-          {filtered.length}{" "}
-          {filtered.length === 1 ? "project" : "projects"}
+          {filtered.length} {filtered.length === 1 ? "project" : "projects"}
         </p>
 
-        <div className="mt-2">
-          <ProjectList
-            projects={filtered}
-            onClearFilters={clearFilters}
-          />
+        <div className="mt-3">
+          <ProjectList projects={filtered} onClearFilters={clearFilters} />
         </div>
       </DataBoundary>
     </Container>

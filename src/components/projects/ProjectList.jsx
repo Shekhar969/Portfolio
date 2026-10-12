@@ -14,7 +14,7 @@ export default function ProjectList({ projects, onClearFilters }) {
   }
 
   return (
-    <div className="divide-y divide-border">
+    <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
       {projects.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}
