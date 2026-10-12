@@ -1,0 +1,9 @@
+├── tests/
+│   ├── conftest.py
+│   ├── test_homepage.py
+│   ├── test_navigation.py
+│   ├── test_links.py
+│   ├── test_api.py
+│   └── test_database.py
+├── requirements.txt
+└── .env 
