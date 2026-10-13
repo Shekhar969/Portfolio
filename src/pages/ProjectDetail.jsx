@@ -15,6 +15,26 @@ import { useProject, useProjects } from "../hooks/useProjects";
 import { PROJECT_STATUSES, ROUTES } from "../lib/constants";
 import { cn, getFirebaseErrorMessage } from "../lib/utils";
 
+const CASE_SECTIONS = [
+  { key: "problem", title: "The problem", kind: "text" },
+  { key: "goals", title: "Goals", kind: "list" },
+  { key: "solution", title: "The solution", kind: "text" },
+  { key: "architecture", title: "Architecture", kind: "flow" },
+  { key: "implementedFeatures", title: "Implemented features", kind: "list" },
+  { key: "plannedFeatures", title: "Planned features", kind: "list" },
+  { key: "implementation", title: "Implementation", kind: "text" },
+  { key: "challenges", title: "Challenges", kind: "list" },
+  { key: "tradeoffs", title: "Trade-offs", kind: "list" },
+  { key: "results", title: "Results", kind: "text" },
+  { key: "lessons", title: "Lessons learned", kind: "list" },
+  { key: "future", title: "Future work", kind: "list" },
+];
+
+/** True only when there is something real to show (not empty or just spaces). */
+function hasContent(kind, value) {
+  if (kind === "text") return typeof value === "string" && value.trim() !== "";
+  return Array.isArray(value) && value.some((item) => String(item).trim() !== "");
+}
 /** One line of text: bold, italic, strikethrough, code, and links only. */
 function Inline({ text }) {
   return (
@@ -191,59 +211,37 @@ export default function ProjectDetail() {
         </Section>
       )}
 
-      {caseStudy ? (
-        <>
-          <Section title="The problem">
-            {caseStudy.problem && <ArticleContent content={caseStudy.problem} />}
-          </Section>
-          <Section title="Goals">
-            <BulletList items={caseStudy.goals} />
-          </Section>
-          <Section title="The solution">
-            {caseStudy.solution && <ArticleContent content={caseStudy.solution} />}
-          </Section>
-          <Section title="Architecture">
-            {caseStudy.architecture?.length > 0 && (
-              <>
-                <ArchitectureFlow steps={caseStudy.architecture} />
-                {status === "planned" && (
-                  <p className="mt-3 text-center text-sm text-muted-foreground">
-                    Planned design, not yet implemented.
-                  </p>
-                )}
-              </>
-            )}
-          </Section>
-          <Section title="Implemented features">
-            <BulletList items={caseStudy.implementedFeatures} />
-          </Section>
-          <Section title="Planned features">
-            <BulletList items={caseStudy.plannedFeatures} />
-          </Section>
-          <Section title="Implementation">
-            {caseStudy.implementation && (
-              <ArticleContent content={caseStudy.implementation} />
-            )}
-          </Section>
-          <Section title="Challenges">
-            <BulletList items={caseStudy.challenges} />
-          </Section>
-          <Section title="Trade-offs">
-            <BulletList items={caseStudy.tradeoffs} />
-          </Section>
-          <Section title="Results">
-            {caseStudy.results && <ArticleContent content={caseStudy.results} />}
-          </Section>
-          <Section title="Lessons learned">
-            <BulletList items={caseStudy.lessons} />
-          </Section>
-          <Section title="Future work">
-            <BulletList items={caseStudy.future} />
-          </Section>
-        </>
-      ) : (
-        <p className="mt-12 text-muted-foreground">Case study coming soon.</p>
-      )}
+      {(() => {
+        const visible = CASE_SECTIONS.filter((section) =>
+          hasContent(section.kind, caseStudy?.[section.key])
+        );
+
+        if (!visible.length) {
+          return (
+            <p className="mt-12 text-muted-foreground">Case study coming soon.</p>
+          );
+        }
+
+        return visible.map((section) => {
+          const value = caseStudy[section.key];
+          return (
+            <Section key={section.key} title={section.title}>
+              {section.kind === "text" && <ArticleContent content={value} />}
+              {section.kind === "list" && <BulletList items={value} />}
+              {section.kind === "flow" && (
+                <>
+                  <ArchitectureFlow steps={value} />
+                  {status === "planned" && (
+                    <p className="mt-3 text-center text-sm text-muted-foreground">
+                      Planned design, not yet implemented.
+                    </p>
+                  )}
+                </>
+              )}
+            </Section>
+          );
+        });
+      })()}
 
       {gallery.length > 0 && (
         <Section title="Screenshots">
