@@ -23,6 +23,12 @@ const ExperienceManager = lazy(() => import("./admin/ExperienceManager"));
 const EducationManager = lazy(() => import("./admin/EducationManager"));
 const MessagesManager = lazy(() => import("./admin/MessagesManager"));
 const SettingsManager = lazy(() => import("./admin/SettingsManager"));
+const ExperiencePage = lazy(() =>
+  import("./pages/Career").then((m) => ({ default: m.ExperiencePage }))
+);
+const EducationPage = lazy(() =>
+  import("./pages/Career").then((m) => ({ default: m.EducationPage }))
+);
 
 export default function App() {
   return (
@@ -37,6 +43,8 @@ export default function App() {
             <Route path="blog/:slug" element={<BlogPost />} />
           </>
         )}
+        <Route path="experience" element={<ExperiencePage />} />
+        <Route path="education" element={<EducationPage />} />
         <Route path="contact" element={<Contact />} />
         <Route path="privacy" element={<Privacy />} />
         <Route path="resume" element={<Resume />} />

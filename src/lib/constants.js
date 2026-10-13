@@ -30,6 +30,8 @@ export const ROUTES = {
   privacy: "/privacy",
   admin: "/admin",
   adminLogin: "/admin/login",
+  experience: "/experience",
+  education: "/education",
 };
 
 // FEATURES and ROUTES must be declared above this point.
@@ -41,7 +43,14 @@ export const NAV_LINKS = [
   { label: "Resume", to: ROUTES.resume },
 ].filter((link) => link.to !== ROUTES.blog || FEATURES.blog);
 
-export const FOOTER_LINKS = NAV_LINKS;
+export const FOOTER_LINKS = [
+  { label: "Home", to: ROUTES.home },
+  { label: "Projects", to: ROUTES.projects },
+  { label: "Experience", to: ROUTES.experience },
+  { label: "Education", to: ROUTES.education },
+  { label: "Resume", to: ROUTES.resume },
+  { label: "Contact", to: ROUTES.contact },
+].filter((link) => link.to !== ROUTES.blog || FEATURES.blog);
 
 // Leave `href` empty to hide a link. SocialLinks will only render entries
 // that have a real href.

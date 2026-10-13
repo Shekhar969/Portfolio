@@ -52,14 +52,14 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
+        {/* <div className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <p>
             © {new Date().getFullYear()} {site.name}
           </p>
           <Link to={ROUTES.privacy} className={linkClass}>
             Privacy
           </Link>
-        </div>
+        </div> */}
           <p className="mt-10 border-t border-border pt-6 text-sm text-muted-foreground">
           © {new Date().getFullYear()} {site.name} |{" "}
           <Link to={ROUTES.privacy} className={linkClass}>

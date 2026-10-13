@@ -11,7 +11,7 @@ if (existsSync(".env")) {
 
 const base = SITE.url.replace(/\/$/, "");
 const today = new Date().toISOString().slice(0, 10);
-const paths = ["/", "/projects", "/contact", "/resume", "/privacy"];
+const paths = ["/", "/projects", "/experience", "/education", "/contact", "/resume", "/privacy"];
 
 async function publishedProjectSlugs() {
   const projectId = process.env.VITE_FIREBASE_PROJECT_ID;
