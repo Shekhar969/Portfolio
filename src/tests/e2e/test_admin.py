@@ -91,7 +91,7 @@ def test_all_admin_routes_load(admin_page: Page):
 @allure.title("Check Firestore Listen API")
 async def test_firestore_api():
 
-    url = "PASTE_YOUR_FIRESTORE_URL_HERE"
+    url = "7gnUbfEfiZac7HGG9dEktzGKUWy1"
 
     async with async_playwright() as p:
         request = await p.request.new_context()
