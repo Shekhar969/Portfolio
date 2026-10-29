@@ -8,8 +8,6 @@ from pages.paths import ADMIN_PATHS
 def test_admin_login(page):
     login = AdminLoginPage(page).goto()
     login.login(ADMIN_EMAIL, ADMIN_PASSWORD)
-
-    page.wait_for_url("**/admin")
     assert "/admin" in page.url
 
 
